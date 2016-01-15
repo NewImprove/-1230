@@ -643,7 +643,10 @@ NSMutableArray *_aryPresonMessageComment;
     
     NSMutableDictionary *dicUser = self.dicTalk[@"user"];
     
+    
+    
     [self performSegueWithIdentifier:@"otherUserSegue" sender:dicUser];
+    
 }
 
 - (IBAction)buttonKeyBoardCancel:(id)sender {

@@ -26,7 +26,16 @@
 #define RGBCOLOR(r, g, b)       [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:1]
 #define RGBACOLOR(r, g, b, a)   [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
 
-#define OptionLineColor  [UIColor colorWithRed:249.0/255.0f green:237/255.0f blue:49/255.0f alpha:1]
+#define OptionLineColor  [UIColor colorWithRed:249.0/255.0f green:237.0/255.0f blue:49.0/255.0f alpha:1]
+
+// 51,163,219
+#define OptionLineColor_otherVC [UIColor colorWithRed:51.0/255.0f green:163.0/255.0f blue:219.0/255.0f alpha:1]
+
+//238,238,238
+#define OptionItemColor_otherVC [UIColor colorWithRed:238/255.0f green:238/255.0f blue:238/255.0f alpha:1]
+
+
+
 #define OptionItemColor  [UIColor colorWithRed:38.0/255.0f green:56/255.0f blue:70/255.0f alpha:1]
 
 //字体宏
@@ -47,15 +56,30 @@ typedef void(^changeOptionSelectedBlock)(NSInteger optionIndex);
 //下划线的颜色 
 // #F9ED31   RGB:249,237,49
 
+//static UIColor * optionLineColor;
+//static UIColor * optionBgColor;
+
+@interface UserOption ()
+
+
+@property (nonatomic,assign) BOOL isSelfViewControler;
+
+@end
+
 @implementation UserOption
 
-
-- (instancetype)initWithFrame:(CGRect)frame userOptionsArray:(NSArray *)userOptionsArray
+- (instancetype)initWithFrame:(CGRect)frame userOptionsArray:(NSArray *)userOptionsArray WithIsSelfViewController:(BOOL)isSelfVC
 {
     self = [super initWithFrame:frame];
     if (self) {
         
+//        [UIColor redColor]
 #warning 2>>4
+        
+        self.backgroundColor = isSelfVC?OptionItemColor:OptionItemColor_otherVC;
+        
+        self.isSelfViewControler = isSelfVC;
+        
         self.segmentCount = 2;
         
     }
@@ -119,9 +143,18 @@ typedef void(^changeOptionSelectedBlock)(NSInteger optionIndex);
         UIView * optionView = [[UIView alloc]initWithFrame:CGRectMake(i * Main_Screen_Width/_amount, 0, Main_Screen_Width/_amount, optionItemHeight+optionItemLineHeight)];
         
         optionView.tag = i;
-        [optionView setBackgroundColor:OptionItemColor];
+        
+        
+//        [optionView setBackgroundColor:OptionItemColor];
+        
         if (i == 0) {
-            [optionView setBackgroundColor:OptionLineColor];
+            if (self.isSelfViewControler) {
+                [optionView setBackgroundColor:OptionLineColor];
+            } else {
+                [optionView setBackgroundColor:OptionLineColor_otherVC];
+            }
+            
+            
             self.selectedIndex = 0;
         }
         
@@ -132,14 +165,10 @@ typedef void(^changeOptionSelectedBlock)(NSInteger optionIndex);
             buttonTypeName.frame = CGRectMake(Main_Screen_Width/_amount/2, 0, Main_Screen_Width/_amount/2, optionItemHeight);
 
         
-        
         NSLog(@"%@",NSStringFromCGRect(buttonTypeName.frame));
-        [buttonTypeName setBackgroundColor:OptionItemColor];
-//        [buttonTypeName setBackgroundColor:[UIColor orangeColor]];
-//        buttonTypeName.titleLabel.font = [UIFont systemFontOfSize:10];
-//        buttonTypeName.titleLabel.textColor = [UIColor redColor];
+        
+        buttonTypeName.backgroundColor = self.isSelfViewControler?OptionItemColor:OptionItemColor_otherVC;
         buttonTypeName.titleLabel.font = PingFangSC(12);
-//        buttonTypeName.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 10, 0);
         buttonTypeName.titleEdgeInsets = UIEdgeInsetsMake(0, -50, 0, 0);
         [buttonTypeName setTitleColor:RGBCOLOR(170, 170, 170) forState:UIControlStateNormal];
         buttonTypeName.tag = i+100;
@@ -179,18 +208,24 @@ typedef void(^changeOptionSelectedBlock)(NSInteger optionIndex);
 
         //左右布局
 //        UIButton * button = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, Main_Screen_Width/_amount, optionItemHeight/2)];
-        button.backgroundColor = [UIColor redColor];
+        
+        button.backgroundColor = self.isSelfViewControler?OptionItemColor:OptionItemColor_otherVC;
+        
         button.titleEdgeInsets = UIEdgeInsetsMake(0, 50, 0, 0);
         
 //        [button setBackgroundColor:[UIColor colorWithWhite:0.5 alpha:0]];
 //        button.alpha = 0.1;
         button.tag = i;
-        [button setBackgroundColor:RGBCOLOR(38, 56, 70)];
+
         [button addTarget:self action:@selector(buttonAction:) forControlEvents:UIControlEventTouchUpInside];
 //        [button addTarget:self action:@selector(buttonAction2:) forControlEvents:UIControlEventTouchUpInside];
         button.titleLabel.font = PingFangSC(24);
-        //249,237,49
-        [button setTitleColor:RGBCOLOR(249, 237, 49) forState:UIControlStateNormal];
+        
+        if (self.isSelfViewControler) {
+            [button setTitleColor:OptionLineColor forState:UIControlStateNormal];
+        } else {
+            [button setTitleColor:OptionLineColor_otherVC forState:UIControlStateNormal];
+        }
 //        [button setBackgroundColor:[UIColor orangeColor]];
         [optionView addSubview:button];
         
@@ -209,11 +244,15 @@ typedef void(^changeOptionSelectedBlock)(NSInteger optionIndex);
     for (UIView * view in self.subviews) {
         
         if (view.tag == sender.tag) {
-            view.backgroundColor = OptionLineColor;
+            
+            view.backgroundColor = self.isSelfViewControler?OptionLineColor:OptionLineColor_otherVC;
+
+
+            
             self.selectedIndex = sender.tag;
         }
         else{
-            view.backgroundColor = OptionItemColor;
+            view.backgroundColor = self.isSelfViewControler?OptionItemColor:OptionItemColor_otherVC;
         }
     }
     [self.delegate segmentedControlSelectAtIndex:self.selectedIndex];
@@ -223,11 +262,12 @@ typedef void(^changeOptionSelectedBlock)(NSInteger optionIndex);
     for (UIView * view in self.subviews) {
         
         if (view.tag == sender.tag - 100) {
-            view.backgroundColor = OptionLineColor;
+            
+            view.backgroundColor = self.isSelfViewControler?OptionLineColor:OptionLineColor_otherVC;
             self.selectedIndex = sender.tag - 100;
         }
         else{
-            view.backgroundColor = OptionItemColor;
+            view.backgroundColor = self.isSelfViewControler?OptionItemColor:OptionItemColor_otherVC;
         }
     }
     [self.delegate segmentedControlSelectAtIndex:self.selectedIndex];

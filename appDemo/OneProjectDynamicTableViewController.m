@@ -20,7 +20,7 @@
 #import "OtherUserInfoViewController.h"
 #import "OneProjectTableViewCell.h"
 #import "ProjectModel.h"
-
+#import "UserInfoViewController.h"
 
 @interface OneProjectDynamicTableViewController ()
 
@@ -186,6 +186,9 @@ CGSize _iOSDeviceSizeOneProject;
 -(void)viewWillAppear:(BOOL)animated{
     
     [super viewWillAppear:animated];
+    
+    
+    self.tabBarController.tabBar.hidden = NO;
     
     _httpClassOneProject = [[HttpClassSelf alloc] init];
     
@@ -597,7 +600,6 @@ CGSize _iOSDeviceSizeOneProject;
     
     _boolkeyBoardAppear = YES;
     
-    NSLog(@"%lu",sender.tag);
     
     [self performSegueWithIdentifier:@"talkSegue" sender:_aryProjectMessage[sender.tag][@"_id"]];
     
@@ -646,7 +648,11 @@ CGSize _iOSDeviceSizeOneProject;
     
     NSMutableDictionary *dicUser = dic[@"user"];
     
-    [self performSegueWithIdentifier:@"OtherUserSegue" sender:dicUser];
+//    [self performSegueWithIdentifier:@"OtherUserSegue" sender:dicUser];
+    
+    UserInfoViewController * userInfoVC = [[UserInfoViewController alloc]init];
+//    userInfoVC.userBaseModel = dic;
+    [self.navigationController pushViewController:userInfoVC animated:YES];
     
 }
 

@@ -25,6 +25,7 @@
 #import "CreateDynamicNavigationController.h"
 #import "CreateDynamicViewController.h"
 #import "OneProjectDynamicTableViewController.h"
+#import "UserSelfMessageViewController.h"
 
 
 @interface ProjectDynamicTableViewController ()
@@ -941,13 +942,18 @@ NSString *_strDeleteFeedID;
     }else if([segue.identifier isEqualToString:@"OtherUserSegue"]){
         
         
-        UINavigationController *naVC = segue.destinationViewController;
+//        UserSelfMessageViewController * userInfoVC = [[UserSelfMessageViewController alloc]init];
+        //    userInfoVC.userBaseModel = dic;
+//        [self.navigationController pushViewController:userInfoVC animated:YES];
+
         
-        OtherUserInfoViewController *controller = (OtherUserInfoViewController*)naVC.topViewController;
-        
-        NSLog(@"打印打印他人信息%@",sender);
-        
-        controller.dicOtherUser = sender;
+//        UINavigationController *naVC = segue.destinationViewController;
+//        
+//        OtherUserInfoViewController *controller = (OtherUserInfoViewController*)naVC.topViewController;
+//        
+//        NSLog(@"打印打印他人信息%@",sender);
+//        
+//        controller.dicOtherUser = sender;
         
     }else if([segue.identifier isEqualToString:@"OneProjectSegue"]){
         
@@ -1529,19 +1535,39 @@ NSString *_strDeleteFeedID;
     
     NSMutableDictionary *dicUserMessage = dic[@"user"];
     
-    [self performSegueWithIdentifier:@"OtherUserSegue" sender:dicUserMessage];
+//    UserInfoViewController * userInfoVC = [[UserInfoViewController alloc]init];
+    //    userInfoVC.userBaseModel = dic;
+//    [self.navigationController pushViewController:userInfoVC animated:YES];
+
+    
+//    [self performSegueWithIdentifier:@"OtherUserSegue" sender:dicUserMessage];
     
 }
 
 - (IBAction)buttonPresonMessageClick:(UIButton *)sender {
     
     
-    NSLog(@"%lu",sender.tag);
-    NSMutableDictionary *dic = _aryProjectDynamic[sender.tag];
     
+
+//    NSLog(@"%lu",sender.tag);
+    NSMutableDictionary *dic = _aryProjectDynamic[sender.tag];
+//
     NSMutableDictionary *dicUserMessage = dic[@"user"];
     
-    [self performSegueWithIdentifier:@"OtherUserSegue" sender:dicUserMessage];
+//
+//    [self performSegueWithIdentifier:@"OtherUserSegue" sender:dicUserMessage];
+    
+#warning 他人信息页面
+    
+    
+    NSLog(@"%@",dicUserMessage[@"_id"]);
+
+    UserSelfMessageViewController * userInfoVC = [[UserSelfMessageViewController alloc]initForOtherUserWithUserID:dicUserMessage[@"_id"]];
+    
+    //    userInfoVC.userBaseModel = dic;
+    [self.navigationController pushViewController:userInfoVC animated:YES];
+
+    
 }
 
 - (IBAction)buttonRemind:(id)sender {

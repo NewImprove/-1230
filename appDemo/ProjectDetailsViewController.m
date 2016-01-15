@@ -1075,7 +1075,9 @@ NSString *_strProjectID;
    }
 -(void)buttonCreatorImageClick:(UITapGestureRecognizer*)sender{
     
-    [self performSegueWithIdentifier:@"OtherUserSegue" sender:_dicCreateDetail[sender.view.tag]];
+//    [self performSegueWithIdentifier:@"OtherUserSegue" sender:_dicCreateDetail[sender.view.tag]];
+    
+    
     
 }
 

@@ -44,12 +44,17 @@
 
 #define Navigation_bgColor [UIColor colorWithRed:20/255.0f green:30/255.0f blue:40/255.f alpha:1.0]
 
-#define Navigation_TextColor [UIColor colorWithRed:170/255.0f green:170/255.0f blue:170/255.f alpha:1.0]
+//33A3DB  51,163,219
+#define SegmentOptionBorderColor_OtherView [UIColor colorWithRed:51/255.0f green:163/255.0f blue:219/255.f alpha:1.0]
+
+
+#define SegmentOptionBorderColor_SelfView  [UIColor colorWithRed:249.0/255.0f green:237/255.0f blue:49/255.0f alpha:1]
 
 #define Navigation_TextColor [UIColor colorWithRed:170/255.0f green:170/255.0f blue:170/255.f alpha:1.0]
 
 
 #define HeaderView_bgColor [UIColor colorWithRed:20/255.0f green:30/255.0f blue:40/255.f alpha:1.0]
+
 
 
 static NSInteger userHeaderViewHeight = 108;
@@ -60,6 +65,8 @@ static NSInteger userOptionViewHeight = 57;
 @interface UserSelfMessageViewController ()<UITableViewDelegate,UITableViewDataSource,optionSegmentedControlDelegate,UserFeedTableViewCellDelegate,UserHeaderViewClickDelegate>
 
 #pragma mark 全局参数tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+
+
 
 //segment选项的index
 @property (nonatomic,assign) NSInteger segmentIndex;
@@ -83,7 +90,7 @@ static NSInteger userOptionViewHeight = 57;
 @property (nonatomic,strong) UITableView * userTableView;
 
 //用户基本信息model  本地沙盒 登录后保存的model
-@property (nonatomic,strong) DataModel * userBaseInfoModel;
+//@property (nonatomic,strong) DataModel * userBaseInfoModel;
 
 
 //用户基本信息model
@@ -108,6 +115,8 @@ static NSInteger userOptionViewHeight = 57;
 //发起项目view详细说明
 @property (nonatomic,strong)     UILabel * callTextLabel;
 
+
+
 @end
 
 @implementation UserSelfMessageViewController
@@ -115,12 +124,44 @@ static NSInteger userOptionViewHeight = 57;
 HttpClassSelf *httpClassUserMessage;
 
 
+#pragma mark - 初始化方法
+
+- (instancetype)initForOtherUserWithUserID:(NSString *)userID
+{
+    self = [super init];
+    if (self) {
+        DataModel * dataModel = [DataModel defaultUserBaseInfo];
+        self.userID = userID;
+        self.userTokenID = dataModel.userInfomation.tokenID;
+        NSLog(@"initForOtherUserWithUserID");
+//        [self userBaseInfoRequestWithUserID:userID];
+        
+    }
+    return self;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        
+        DataModel * dataModel = [DataModel defaultUserBaseInfo];
+        
+        
+        self.userID = dataModel.userInfomation.UserID;
+        self.userTokenID = dataModel.userInfomation.tokenID;
+        
+    }
+    return self;
+}
+
 #pragma mark 重写的set/get方法
 
 
 //- (NSArray *)segmentItemCount {
 
 //}
+
 
 - (void)setSegmentIndex:(NSInteger)segmentIndex {
     _segmentIndex = segmentIndex;
@@ -144,12 +185,15 @@ HttpClassSelf *httpClassUserMessage;
     NSLog(@"关注:%zi",self.huobanUserBaseInfoModel.data.followers);
     NSLog(@"被关注:%zi",self.huobanUserBaseInfoModel.data.following);
 #endif
+    
     self.userHeaderView.userHeaderUrl = huobanUserBaseInfoModel.data.image;
     
     self.userOptionView.dataModel = huobanUserBaseInfoModel.data;
     
-    self.userID = huobanUserBaseInfoModel.token;
-    self.userTokenID = huobanUserBaseInfoModel.token;
+    
+//    self.userID = huobanUserBaseInfoModel.token;
+    
+//    self.userTokenID = huobanUserBaseInfoModel.token;
 #warning 不确定
     [self userProjectInfoRequest];
     
@@ -187,19 +231,32 @@ HttpClassSelf *httpClassUserMessage;
 
 - (UserHeaderView *)userHeaderView {
     if (!_userHeaderView) {
-        _userHeaderView = [[UserHeaderView alloc]initWithHeaderUrl:nil];
+        if (![self isSelfOrOtherInfoViewController]) {
+            _userHeaderView = [[UserHeaderView alloc]initWithHeaderUrl:nil];
+            userHeaderViewHeight = 208;
+        } else {
+            _userHeaderView = [[UserHeaderView alloc]initWithHeaderUrl:@"hahah"];
+            userHeaderViewHeight = 108;
+        }
+        
         [_userHeaderView setFrame:CGRectMake(0, 0, self.view.frame.size.width, userHeaderViewHeight)];
         [_userHeaderView setBackgroundColor:HeaderView_bgColor];
         _userHeaderView.delegate = self;
+        
+    
+        
 //        [_userHeaderView setBackgroundColor:[UIColor colorWithRed:21 green:30 blue:40 alpha:1.0]];
     }
     return _userHeaderView;
 }
 
+
+
 - (UserOption *)userOptionView {
     if (!_userOptionView) {
-        _userOptionView = [[UserOption alloc]initWithFrame:CGRectMake(0, userHeaderViewHeight, self.view.frame.size.width, userOptionViewHeight) userOptionsArray:nil];
-//        _userOptionView.segmentCount = 4;
+        
+        _userOptionView = [[UserOption alloc]initWithFrame:CGRectMake(0, userHeaderViewHeight, self.view.frame.size.width, userOptionViewHeight) userOptionsArray:nil WithIsSelfViewController:[self isSelfOrOtherInfoViewController]];
+
         _userOptionView.delegate = self;
     }
     return _userOptionView;
@@ -222,23 +279,23 @@ HttpClassSelf *httpClassUserMessage;
     return _userTableView;
 }
 
-- (DataModel *)userBaseInfoModel {
-    return [DataModel defaultUserBaseInfo];
-}
+//- (DataModel *)userBaseInfoModel {
+//    return [DataModel defaultUserBaseInfo];
+//}
 
-- (NSString *)userTokenID {
-    if (!_userTokenID) {
-        _userTokenID = self.userBaseInfoModel.userInfomation.tokenID;
-    }
-    return _userTokenID;
-}
+//- (NSString *)userTokenID {
+//    if (!_userTokenID) {
+//        _userTokenID = self.userBaseInfoModel.userInfomation.tokenID;
+//    }
+//    return _userTokenID;
+//}
 
-- (NSString *)userID {
-    if (!_userID) {
-        _userID = self.userBaseInfoModel.userInfomation.UserID;
-    }
-    return _userID;
-}
+//- (NSString *)userID {
+//    if (!_userID) {
+//        _userID = self.userBaseInfoModel.userInfomation.UserID;
+//    }
+//    return _userID;
+//}
 
 - (NSInteger)createProjectIsOpen {
     if (!_createProjectIsOpen) {
@@ -250,23 +307,9 @@ HttpClassSelf *httpClassUserMessage;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //网络请求
-//    [self httpRequest];
-
-    
-//    self.userTableView.backgroundColor = [UIColor orangeColor];
-//    self.userTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 100);
-    
     //对navigaitonController进行设置
     [self setNavigationController];
-
-
-
-    
     [self.userTableView headerBeginRefreshing];
-
-    
-//    [self userFeedListRequest];
     
 }
 
@@ -278,6 +321,12 @@ HttpClassSelf *httpClassUserMessage;
 
 #pragma mark 对navigation中包括左右按钮title显示的设置
 - (void) setNavigationController {
+    
+    
+    //去除导航栏底部标识线
+    [self.navigationController.navigationBar setBackgroundImage:[[UIImage alloc]init] forBarMetrics:UIBarMetricsDefault];
+    self.navigationController.navigationBar.shadowImage = [[UIImage alloc]init];
+    
     //导航栏背景
     [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithRed:21.0/255 green:30.0/255 blue:40.0/255 alpha:1]];
     
@@ -288,14 +337,26 @@ HttpClassSelf *httpClassUserMessage;
     
 //    UIBarButtonItem * leftBarButton = [UIBarButtonItem alloc]initWithImage:<#(nullable UIImage *)#> style:<#(UIBarButtonItemStyle)#> target:<#(nullable id)#> action:<#(nullable SEL)#>
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"系统设置"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtonAction)];
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"我_私信"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftBarButtonAction)];
     
     self.navigationItem.title = @"马锦航";
 //    self.tabBarItem.title = @"我";
     //设置navigationItem.title的颜色
     self.navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:Navigation_TextColor forKey:UITextAttributeTextColor];
+    
+    
+    
+    if (self.userTokenID == self.userID) {
+        NSLog(@"userid = usertokenid");
+        
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"系统设置"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(rightBarButtonAction)];
+        
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"我_私信"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(leftBarButtonAction)];
+    } else {
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"back"]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStyleDone target:self action:@selector(popViewController)];
+    }
+
+    
+    
 }
 
 #pragma mark - tableViewDelegate/DataSource
@@ -390,7 +451,7 @@ HttpClassSelf *httpClassUserMessage;
 }
 
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    if (self.segmentIndex == 0) {
+    if (self.segmentIndex == 0 && [self isSelfOrOtherInfoViewController]) {
         
         return [self createProjectHeaderView];
     }
@@ -399,8 +460,8 @@ HttpClassSelf *httpClassUserMessage;
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     
-    if (self.segmentIndex == 0) {
-        if (self.createProjectIsOpen) {
+    if (self.segmentIndex == 0 && [self isSelfOrOtherInfoViewController]) {
+        if (self.createProjectIsOpen ) {
             return 88;
         }
         else {
@@ -520,14 +581,14 @@ HttpClassSelf *httpClassUserMessage;
 }
 
 #pragma mark 用户基本信息网络请求
-- (void) userBaseInfoRequest {
+- (void) userBaseInfoRequestWithUserID:(NSString *)userID {
 
 #warning 自己的信息不全，测试用给定tokenID的来测试
-    NSString * path =[NSString stringWithFormat: @"user/profile/user-%@/%@",[DataModel defaultUserBaseInfo].userInfomation.UserID,[DataModel defaultUserBaseInfo].userInfomation.tokenID];
+//    NSString * path =[NSString stringWithFormat: @"user/profile/user-%@/%@",[DataModel defaultUserBaseInfo].userInfomation.UserID,[DataModel defaultUserBaseInfo].userInfomation.tokenID];
     
-//    NSString * path =[NSString stringWithFormat: @"user/profile/user-5620a7bbb5a2a7a8fe41b83f/5620a7bbb5a2a7a8fe41b83f"];
     
-//    NSString * path =[NSString stringWithFormat: @"user/profile/user-5620a7b7b5a2a7a8fe41b7eb/5620a7b7b5a2a7a8fe41b7eb"];
+        
+    NSString * path =[NSString stringWithFormat: @"user/profile/user-%@/%@",self.userID,self.userTokenID];
 
 
     [HttpTool getWithPath:path params:nil success:^(id JSON) {
@@ -535,12 +596,7 @@ HttpClassSelf *httpClassUserMessage;
         NSLog(@"\n%@",JSON);
         NSLog(@"以上是用户基本信息");
         self.huobanUserBaseInfoModel = [[huobanUserBaseInfoModel alloc]initWithDictionary:JSON];
-//        [DataModel defaultUserBaseInfo] saveUserInfomation
-        
-        
-//        NSDictionary * jsonDict = JSON;
-        
-        
+
     } failure:^(NSError *error) {
         NSLog(@"failure%@",error.localizedDescription);
     }];
@@ -549,21 +605,13 @@ HttpClassSelf *httpClassUserMessage;
 #pragma mark 用户项目的信息
 - (void) userProjectInfoRequest {
     
-    
-    
-//    DataModel *dataModelUnLogin = [DataModel defaultUserBaseInfo];
-    
-//    [[HttpClassSelf new] getUserSelfInfoByUserID:dataModelUnLogin.userInfomation.UserID page:0 num:0 token:dataModelUnLogin.userInfomation.tokenID CallBackYES:^(MKNetworkOperation *operatioin) {
-    
-//    NSLog(@"userID%@,tokenID%@",dataModelUnLogin.userInfomation.UserID,dataModelUnLogin.userInfomation.tokenID );
-    
-    NSString * userID = self.huobanUserBaseInfoModel.token;
-    NSString * tokenID = self.huobanUserBaseInfoModel.token;
+    NSString * userID = self.userID;
+    NSString * tokenID = self.userTokenID;
 //    self.huobanUserBaseInfoModel.token
     //金霖
 //    userID = @"5620a7bbb5a2a7a8fe41b83f"; 
     
-    [[HttpClassSelf new] getUserSelfInfoByUserID:userID page:0 num:0 token:tokenID CallBackYES:^(MKNetworkOperation *operatioin) {
+    [[HttpClassSelf new] getUserSelfInfoByUserID:userID page:0 num:100 token:tokenID CallBackYES:^(MKNetworkOperation *operatioin) {
         NSData *data = [operatioin responseData];
         
         NSMutableDictionary *resdic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
@@ -580,7 +628,6 @@ HttpClassSelf *httpClassUserMessage;
 - (void) userFeedListRequest {
     NSString * userFeedListPath =[NSString stringWithFormat:@"feed/u-%@/page-0/num-20/%@",self.userID,self.userTokenID];
     
-//    NSString * userFeedListPath =[NSString stringWithFormat:@"/feed/u-5620a7bbb5a2a7a8fe41b83f/page-0/num-20/%@",self.userTokenID];
 
     NSLog(@"%@",userFeedListPath);
     
@@ -639,7 +686,7 @@ HttpClassSelf *httpClassUserMessage;
         [[ToolClass sharedInstance] showAlert:@"删除成功"];
         
         NSLog(@"删除成功后的操作");
-        [self userBaseInfoRequest];
+        [self userBaseInfoRequestWithUserID:nil];
 //        [self userFeedListRequest];
 //        [self.userTableView reloadData];
 ;
@@ -650,13 +697,29 @@ HttpClassSelf *httpClassUserMessage;
 }
 
 
-- (void)viewWillAppear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated {
+    animated = YES;
     self.tabBarController.tabBar.hidden = NO;
-    
-//    [self showUserBaseInfo];
-    
     self.hidesBottomBarWhenPushed = NO;
     [self showTabBar];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    if ([self isSelfOrOtherInfoViewController]) {
+        self.tabBarController.tabBar.hidden = NO;
+        self.hidesBottomBarWhenPushed = NO;
+        [self showTabBar];
+        [_userHeaderView setFrame:CGRectMake(0, 0, self.view.frame.size.width, 108)];
+    } else {
+        self.tabBarController.tabBar.hidden = YES;
+        self.hidesBottomBarWhenPushed = YES;
+        [self hideTabBar];
+        [_userHeaderView setFrame:CGRectMake(0, 0, self.view.frame.size.width, 208)];
+        
+    }
+
+    
     
     //showTableView
     [self.view addSubview:self.userTableView];
@@ -666,7 +729,7 @@ HttpClassSelf *httpClassUserMessage;
 
     [self setNavigationController];
     //基本信息网络请求
-    [self userBaseInfoRequest];
+    [self userBaseInfoRequestWithUserID:nil];
     
     //项目信息网络请求
 //    [self userProjectInfoRequest];
@@ -681,9 +744,8 @@ HttpClassSelf *httpClassUserMessage;
 }
 #pragma mark 对用户基本信息进行显示  包括用户名和用户头像
 - (void) showUserBaseInfo {
-    self.navigationItem.title = self.userBaseInfoModel.userInfomation.Name;
-    self.userHeaderView.userHeaderUrl = self.userBaseInfoModel.userInfomation.ImagePreson;
-    
+    self.navigationItem.title = self.huobanUserBaseInfoModel.data.name;
+    self.userHeaderView.userHeaderUrl = self.huobanUserBaseInfoModel.data.image;
     
 }
 
@@ -705,19 +767,13 @@ HttpClassSelf *httpClassUserMessage;
 - (void)pushToUserInfoViewController {
     
     
-    
-    UserInfoViewController * userInfoViewController = [[UserInfoViewController alloc]init];
-    userInfoViewController.userBaseModel = self.huobanUserBaseInfoModel;
-    
-//    userInfoViewController.frame = [UIScreen mainScreen].bounds;
+    if([self isSelfOrOtherInfoViewController]) {
+        UserInfoViewController * userInfoViewController = [[UserInfoViewController alloc]init];
+        userInfoViewController.userBaseModel = self.huobanUserBaseInfoModel;
+        self.hidesBottomBarWhenPushed = YES;
+        [self.navigationController pushViewController:userInfoViewController animated:YES];
+    }
 
-//    UserInfoEditeViewController * userInfoViewController = [[UserInfoEditeViewController alloc]init];
-//    userInfoViewController.userBaseModel = self.huobanUserBaseInfoModel;
-    
-    self.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:userInfoViewController animated:YES];
-    
-#warning doing
     
 }
 
@@ -773,7 +829,6 @@ HttpClassSelf *httpClassUserMessage;
 
 #pragma mark 删除按钮响应事件
 - (void)deleteFeedTableViewCellWithIndexPaht:(NSIndexPath *)indexpath {
-    
 
 #warning 删除动态条目
     
@@ -785,7 +840,7 @@ HttpClassSelf *httpClassUserMessage;
     NSLog(@"deleteFeedTableViewCell");
 }
 
-
+#pragma mark 删除动态前的提示
 - (void)showOkayCancelAlertWithIndexPath:(NSIndexPath *)indexPath {
     NSString *title = NSLocalizedString(@"提示", nil);
     NSString *message = NSLocalizedString(@"您确定要删除吗", nil);
@@ -889,14 +944,29 @@ HttpClassSelf *httpClassUserMessage;
     
     
 }
+
+#pragma mark 判断是个人信息页面还是他人信息页面
+- (BOOL) isSelfOrOtherInfoViewController {
+    
+    
+    NSLog(@"%@\n%@",self.userID,self.userTokenID);
+    
+    if (self.userID == self.userTokenID) {
+        return YES;
+    }
+    return NO;
+}
+
+#pragma mark 是否展开创建项目的页面（联系我们）
 - (void) openCreateProjectView {
     NSLog(@"openCreateProjectView");
     self.createProjectIsOpen = !self.createProjectIsOpen;
-//    self.callTextLabel.hidden = YES;
-//    self.callTextLabel.hidden = !self.callTextLabel.hidden;
     [self.userTableView reloadData];
 }
 
+- (void) popViewController {
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
         /*
 #pragma mark - Navigation

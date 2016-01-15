@@ -25,6 +25,17 @@
 
 @property (nonatomic,strong) NSString * userHeaderUrl;
 
+@property (nonatomic,strong) UIImageView * userLocationImage;
+
+@property (nonatomic,strong) UILabel * userLocationLabel;
+
+@property (nonatomic,strong) UIImageView * userProfessionImage;
+
+@property (nonatomic,strong) UILabel * userProfessionLabel;
+
+@property (nonatomic,strong) UILabel * userDescribe;
+
+
 - (instancetype)initWithHeaderUrl:(NSString *)headerUrl;
 
 

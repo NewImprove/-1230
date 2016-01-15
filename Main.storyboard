@@ -1024,7 +1024,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8cn-qG-MHL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4885.5" y="4043.5"/>
+            <point key="canvasLocation" x="-4789.5" y="3787.5"/>
         </scene>
         <!--个人信息-->
         <scene sceneID="CES-He-I2o">
@@ -4014,8 +4014,8 @@
                                 <rect key="frame" x="259" y="0.0" width="100" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="保存" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="biD-IG-o2R">
-                                        <rect key="frame" x="66.5" y="11" width="29.5" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="保存" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="biD-IG-o2R">
+                                        <rect key="frame" x="67" y="11" width="29" height="21"/>
                                         <fontDescription key="fontDescription" name="PingFangSC-Semibold" family="PingFang SC" pointSize="14.699999809265137"/>
                                         <color key="textColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -5688,7 +5688,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c48-sI-s64" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-891.5" y="1972.5"/>
+            <point key="canvasLocation" x="-233.5" y="1900.5"/>
         </scene>
         <!--Dynamic Up List Table View Controller-->
         <scene sceneID="ubB-CO-fEG">
@@ -6290,11 +6290,11 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="EnY-fu-5tb"/>
+        <segue reference="j7T-5D-xiA"/>
+        <segue reference="Qyk-aU-OMV"/>
+        <segue reference="Xkj-Uo-7U3"/>
+        <segue reference="WMQ-wi-u5A"/>
         <segue reference="OrM-TF-bAD"/>
         <segue reference="L0T-Tw-e28"/>
-        <segue reference="wG9-8z-TdR"/>
-        <segue reference="uKg-tF-8qD"/>
-        <segue reference="G4r-oZ-Wgj"/>
     </inferredMetricsTieBreakers>
 </document>
